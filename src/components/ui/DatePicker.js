@@ -1,10 +1,10 @@
 "use client"
-
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
+import { useRouter } from "next/navigation"; 
 
 const css = `
 .rdp {
@@ -13,16 +13,18 @@ const css = `
 `;
 
 export default function Example() {
-  const [task, setTask] = useState(""); 
+  const router = useRouter();
+  const [task, setTask] = useState("");
   const [selected, setSelected] = useState(null);
-
+console.log(selected);
   const handleDayClick = (date) => {
-    const currentDate = format(date, "yyyy-MM-dd", { locale: fr }); 
-    // console.log(currentDate);
-    setSelected(currentDate); 
+    
+    setSelected(date);
   };
 
-// console.log(task)
+  console.log(task);
+  console.log(selected);
+
   const addTask = async (e) => {
     e.preventDefault();
     try {
@@ -31,11 +33,17 @@ export default function Example() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({task, dateOfRealisation: selected, completed: false} ), 
+        body: JSON.stringify({
+          task,
+          dateOfRealisation: selected.toISOString(),
+          completed: false,
+          dateOfExecution: selected.toISOString(),
+        }),
       });
 
       if (response.ok) {
         console.log("Réponses ajoutées avec succès");
+        location.reload();
       } else {
         console.log(response);
         throw new Error("Erreur pendant l'ajout des réponses.");
@@ -51,21 +59,21 @@ export default function Example() {
       <div className="text-2xl font-semibold">
         <h1>Nouvelle tâche</h1>
       </div>
-      <form onSubmit={addTask}> 
+      <form onSubmit={addTask}>
         <div className="w-full">
           <input
             type="text"
-            className="w-full border rounded my-4 py-2 shadow shadow-gray "
-            placeholder="  Entrer votre tâche" 
+            className="w-full border rounded my-4 py-2 "
+            placeholder="  Entrer votre tâche"
             value={task}
-            onChange={(e) => setTask(e.target.value)} 
+            onChange={(e) => setTask(e.target.value)}
             required
           />
         </div>
         <div className="w-fit rounded-lg border font-inter flex justify-around">
           <DayPicker
             mode="single"
-            selected={new Date(selected)} 
+            selected={ selected} 
             onDayClick={handleDayClick} 
             locale={fr}
           />

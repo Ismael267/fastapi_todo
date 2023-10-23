@@ -25,12 +25,12 @@ export default function Example() {
 // console.log(task)
   const changeDate = (id) => {
    
-      fetch(`http://127.0.0.1:8000/update/taskDate/${task_id}`, {
+      fetch(`http://127.0.0.1:8000/update/taskDate/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({dateOfRealisation: selected} ), 
+        body: JSON.stringify({dateOfRealisation: selected,dateOfExecution: selected} ), 
       });
 
       if (response.ok) {
