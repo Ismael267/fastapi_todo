@@ -50,7 +50,7 @@ export default function Home() {
 
   // console.log(formattedDate);
   const changeDateplus = (id) => {
-     afetch(`http://127.0.0.1:8000/update/taskDatePlus/${id}`, {
+     fetch(`http://127.0.0.1:8000/update/taskDatePlus/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -164,9 +164,9 @@ export default function Home() {
   const hourformat = (dateT) => {
     const Ldate = new Date(dateT);
     return Ldate.toLocaleString("fr-FR", {
-      // weekday: "long",
-      // month: "long",
-      // day: "numeric",
+      weekday: "short",
+      month: "short",
+      day: "numeric",
       hour: "numeric",
       minute: "numeric",
     });
@@ -395,8 +395,8 @@ export default function Home() {
                   <label className="line-through">{task.task}</label>
                 </div>
                 <div className="flex items-center ml-auto ">
-                  <p className="font-light max-md:text-sm">
-                    Aujourd'hui, {hourformat(task.dateOfExecution)}
+                  <p className="font-light max-md:text-sm" >
+                     {hourformat(task.dateOfExecution)}
                   </p>
                   <div>
                     <Menu as="div" className=" inline-block text-left">
