@@ -19,6 +19,7 @@ export default function Home() {
   const [isChecked, setIsChecked] = useState(false);
   const [selected, setSelected] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [loading,setLoading]= useState(true)
 
   const fetchTasks = () => {
     fetch("http://127.0.0.1:8000/tasks", {
@@ -109,6 +110,11 @@ export default function Home() {
     setIsOpen1(true);
   }
   useEffect(() => {
+    if (tasks) {
+      setTimeout(() => {
+        setLoading(false)
+      }, 2000);
+    }
     fetchTasks();
   }, []);
   const toggleCheckbox = (id) => {
@@ -183,10 +189,22 @@ export default function Home() {
         <div className="text-white mb-8 font-inter ">
           <h1 className="font-semibold text-2xl">À venir</h1>
         </div>
+        {loading ? (
+        <div className="flex w-full flex-1 flex-col mb-4 ">
+          <div className="animate-pulse flex-row items-center   rounded-xl  ">
+            <div className="flex flex-col space-y-3">
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              {/* <div className="h-5 w-5 rounded-full bg-blue-100 "></div> */}
+            </div>
+          </div>
+        </div>
+      ) : (
         <div className=" mb-16">
           {tasks.map((task) =>
             !task.completed && task.dateOfRealisation.split('T')[0] > TodayIsoDate ? (
-              <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  ">
+              <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  " key={task.id}>
                 <div className="items-center flex max-md:items-start">
                   <button
                     className="mx-2 rounded-full text-gray-600 max-md:mt-1"
@@ -364,14 +382,27 @@ export default function Home() {
             ) : null
           )}
         </div>
+        )}
         <div className="">
           <p className="w-fit text-white bg-neutral-900 from-transparent py-1 px-4 rounded text-sm">
             Terminé
           </p>
+          {loading ? (
+        <div className="flex w-full flex-1 flex-col mt-4 ">
+          <div className="animate-pulse flex-row items-center   rounded-xl  ">
+            <div className="flex flex-col space-y-3">
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              {/* <div className="h-5 w-5 rounded-full bg-blue-100 "></div> */}
+            </div>
+          </div>
+        </div>
+      ) : (
           <div className="mt-4">
             {tasks.map((task) =>
               task.completed && task.dateOfRealisation.split('T')[0] > TodayIsoDate ? (
-                <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  ">
+                <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  " key={task.id}>
                   <div className="items-center flex max-md:items-start">
                     <button
                       className="mx-2 rounded-full text-gray-600 max-md:mt-1"
@@ -492,6 +523,7 @@ export default function Home() {
               ) : null
             )}
           </div>
+          )}
         </div>
         <div>
           <Modal />

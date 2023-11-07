@@ -13,17 +13,22 @@ const css = `
 .rdp {
   --rdp-cell-size: 45px;
 }
-`; 
+`;
 const tache = () => {
-   const router= useRouter()
+  const router = useRouter();
   const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const changeDate = (id) => {
     fetch(`http://127.0.0.1:8000/update/taskDate/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ dateOfRealisation: selected }),
+      body: JSON.stringify({
+        dateOfRealisation: selected,
+        dateOfExecution: selected,
+      }),
     });
   };
   const handleDayClick = (date) => {
@@ -54,18 +59,17 @@ const tache = () => {
         "Content-Type": "application/json",
       },
     })
-    .then(response => {
-      if (response.ok) {
-        location.reload();
-        console.log('Response is OK');
-     
-      } else {
-        console.log('Response is not OK');
-      }
-    })
-    .catch(error => {
-      console.error('Error: ', error);
-    });;
+      .then((response) => {
+        if (response.ok) {
+          location.reload();
+          console.log("Response is OK");
+        } else {
+          console.log("Response is not OK");
+        }
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
   };
   const toggleCheckbox = (id) => {
     fetch(`http://localhost:8000/update/task/${id}`, {
@@ -74,7 +78,7 @@ const tache = () => {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ completed: true,dateOfExecution:dataTY }),
+      body: JSON.stringify({ completed: true, dateOfExecution: dataTY }),
     })
       .then((response) => {
         if (response.ok) {
@@ -96,10 +100,9 @@ const tache = () => {
         Accept: "application/json",
       },
       method: "DELETE",
-    })
-    .then((response) => {
+    }).then((response) => {
       if (response.ok) {
-        router.refresh()
+        router.refresh();
         // location.reload()
         console.log("Response is OK");
       } else {
@@ -107,8 +110,8 @@ const tache = () => {
       }
     });
   };
-  const dateT= new Date()
-  const dataTY=dateT.toISOString()
+  const dateT = new Date();
+  const dataTY = dateT.toISOString();
 
   const hourformat = (dateT) => {
     const Ldate = new Date(dateT);
@@ -131,7 +134,6 @@ const tache = () => {
     setIsOpen1(true);
   }
 
-
   const convertDate = (isoDate) => {
     const date = new Date(isoDate);
     const options = {
@@ -144,19 +146,35 @@ const tache = () => {
   };
 
   useEffect(() => {
+    if (tasks) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
     fetchTasks();
     deleteTask();
   }, []);
   return (
     <>
-     
-        <div className="text-white mb-8 font-inter ">
-          <h1 className="font-semibold text-2xl">Tâche</h1>
+      <div className="text-white mb-8 font-inter ">
+        <h1 className="font-semibold text-2xl">Tâche</h1>
+      </div>
+      {loading ? (
+        <div className="flex w-full flex-1 flex-col mb-4 ">
+          <div className="animate-pulse flex-row items-center   rounded-xl  ">
+            <div className="flex flex-col space-y-3">
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              {/* <div className="h-5 w-5 rounded-full bg-blue-100 "></div> */}
+            </div>
+          </div>
         </div>
+      ) : (
         <div className=" mb-16">
           {tasks.map((task) =>
             !task.completed ? (
-              <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  ">
+              <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  " key={task.id}>
                 <div className="items-center flex max-md:items-start  ">
                   <button
                     className="mx-2 rounded-full text-gray-600 max-md:mt-1"
@@ -226,7 +244,7 @@ const tache = () => {
                             <Menu.Item>
                               {({ active }) => (
                                 <button
-                                onClick={()=>changeDateplus(task.id)}
+                                  onClick={() => changeDateplus(task.id)}
                                   className={`${
                                     active ? "bg-slate-50 " : "text-gray-900"
                                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
@@ -256,7 +274,7 @@ const tache = () => {
                                   className={`${
                                     active
                                       ? "bg-slate-50 text-red-600"
-                                      :  " text-gray-900"
+                                      : " text-gray-900"
                                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                   onClick={() => deleteTask(task.id)}
                                 >
@@ -313,7 +331,11 @@ const tache = () => {
                                       />
                                     </div>
                                     <div className="my-4 flex justify-end">
-                                  
+                                      <input
+                                        type="submit"
+                                        value="Valider"
+                                        className="bg-blue-600 hover:bg-blue-7 p-2 px-4 rounded-lg"
+                                      />
                                       <button
                                         onClick={closeModal1}
                                         className="bg-white border p-2 px-4 mx-1 rounded-lg text-gray-500"
@@ -335,40 +357,56 @@ const tache = () => {
             ) : null
           )}
         </div>
-        <div className="">
-          <p className="w-fit text-white bg-neutral-900 from-transparent py-1 px-4 rounded text-sm">
-            Terminé
-          </p>
-          <div className="mt-4">
-            {tasks.map((task) =>
-              task.completed ? (
-                <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  ">
-                  <div className="items-center flex max-md:items-start">
-                    <button
-                      className="mx-2 rounded-full text-gray-600 max-md:mt-1"
-                      onClick={() => toggleCheckbox(task.id)}
+      )}
+      <div className="">
+        <p className="w-fit text-white bg-neutral-900 from-transparent py-1 px-4 rounded text-sm">
+          Terminé
+        </p>
+        {loading ? (
+        <div className="flex w-full flex-1 flex-col mt-4 ">
+          <div className="animate-pulse flex-row items-center   rounded-xl  ">
+            <div className="flex flex-col space-y-3">
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              <div className="h-8 w-12/12 rounded-md bg-blue-100/80 "></div>
+              {/* <div className="h-5 w-5 rounded-full bg-blue-100 "></div> */}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-4">
+          {tasks.map((task) =>
+            task.completed ? (
+              <div className="bg-gray-100 rounded shadow p-2 mb-3 flex justify-between flex-wrap  max-md:flex-column  " key={task.id}>
+                <div className="items-center flex max-md:items-start">
+                  <button
+                    className="mx-2 rounded-full text-gray-600 max-md:mt-1"
+                    onClick={() => toggleCheckbox(task.id)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#3366FF"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#3366FF"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                    </button>
-                    <label className="line-through">{task.task}</label>
-                  </div>
-                  <div className="flex items-center ml-auto">
-                    <p className="font-light max-md:text-sm"> {hourformat(task.dateOfExecution)}</p>
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                  </button>
+                  <label className="line-through">{task.task}</label>
+                </div>
+                <div className="flex items-center ml-auto">
+                  <p className="font-light max-md:text-sm">
+                    {" "}
+                    {hourformat(task.dateOfExecution)}
+                  </p>
 
-                    <div>
+                  <div>
                     <Menu as="div" className=" inline-block text-left">
                       <div>
                         <Menu.Button className="inline-flex w-full justify-center rounded-md  bg-opacity-20 px py text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
@@ -416,7 +454,7 @@ const tache = () => {
                                     active ? "bg-slate-50 " : "text-gray-300"
                                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                   disabled
-                                  onClick={()=>changeDateplus(task.id)}
+                                  onClick={() => changeDateplus(task.id)}
                                 >
                                   Echéance à demain
                                 </button>
@@ -443,7 +481,7 @@ const tache = () => {
                                   className={`${
                                     active
                                       ? "bg-slate-50 text-red-600"
-                                      :  " text-gray-900"
+                                      : " text-gray-900"
                                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                   onClick={() => deleteTask(task.id)}
                                 >
@@ -455,17 +493,17 @@ const tache = () => {
                         </Menu.Items>
                       </Transition>
                     </Menu>
-                    </div>
                   </div>
                 </div>
-              ) : null
-            )}
-          </div>
+              </div>
+            ) : null
+          )}
         </div>
-        <div>
-          <Modal />
-        </div>
-      
+          )}
+      </div>
+      <div>
+        <Modal />
+      </div>
     </>
   );
 };

@@ -93,28 +93,28 @@ const Page = () => {
   console.log(JSON.stringify(selectedDay));
 
   return (
-    <div className="m-auto">
-      <Calendar
-        // value={selectedDay}
-        onChange={handleDateChange}
-        minimumDate={utils().getToday()}
-        locale={myCustomLocale}
-        colorPrimary="#9c88ff"
-        calendarClassName="custom-calendar"
-        calendarTodayClassName="custom-today-day"
-      />
-    </div>
-
-    // <div className="flex w-full flex-1 flex-col   px-2">
-    //   <div className="mt-12  animate-pulse flex-row items-center justify-center space-x-1 rounded-xl  ">
-    //     <div className="flex flex-col space-y-2">
-    //       <div className="h-6 w-11/12 rounded-md bg-blue-100 "></div>
-    //       <div className="h-6 w-10/12 rounded-md bg-blue-100 "></div>
-    //       <div className="h-6 w-11/12 rounded-md bg-blue-100 "></div>
-    //       <div className="h-5 w-5 rounded-full bg-blue-100 "></div>
-    //     </div>
-    //   </div>
+    // <div className="m-auto">
+    //   <Calendar
+    //     // value={selectedDay}
+    //     onChange={handleDateChange}
+    //     minimumDate={utils().getToday()}
+    //     locale={myCustomLocale}
+    //     colorPrimary="#9c88ff"
+    //     calendarClassName="custom-calendar"
+    //     calendarTodayClassName="custom-today-day"
+    //   />
     // </div>
+
+    <div className="flex w-full flex-1 flex-col   px-2">
+      <div className="mt-12  animate-pulse flex-row items-center justify-center space-x-1 rounded-xl  ">
+        <div className="flex flex-col space-y-2">
+          <div className="h-6 w-11/12 rounded-md bg-blue-100 "></div>
+          <div className="h-6 w-10/12 rounded-md bg-blue-100 "></div>
+          <div className="h-6 w-11/12 rounded-md bg-blue-100 "></div>
+          <div className="h-5 w-5 rounded-full bg-blue-100 "></div>
+        </div>
+      </div>
+    </div>
   );
 };
 
